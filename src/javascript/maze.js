@@ -9,7 +9,7 @@ function Init() {
     //CameraPos = {x:0, y:0, z:30};
     CameraRot = {x:0, y:0, z:0};
     WaitTime = 10;
-    
+
     makeBoard();
 }
 
@@ -27,10 +27,10 @@ function makeBoard() {
             }
         }
     }
-    
+
     //Character
     character = makeCylinder(3, {x:.5, y:.5, z:-1}, {x:Location.x+Location.r_x*Dimension.x, y:Location.y+Location.r_y*Dimension.y, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
-    
+
     //Orientation
     //makeSphere(1, {x:2, y:.01, z:.01}, {x:3, y:0, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
     //makeSphere(1, {x:.01, y:1, z:.01}, {x:0, y:2, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
@@ -41,8 +41,8 @@ function makeHiddenRoom(r_x, r_y) {
     var center = {x:(r_x+.5)*Dimension.x-.5, y:(r_y+.5)*Dimension.y-.5, z:0};
     var newFaces = CubeFaces.slice();
     var newVertex = CubeVertex.slice();
-    
-    for(var n = 0; n < newVertex.length; n++) {
+
+    for (var n = 0; n < newVertex.length; n++) {
         var v = newVertex[n];
         newVertex[n] = {x:(v.x-.5)*Dimension.x, y:(v.y-.5)*Dimension.y, z:v.z-1};
     }
@@ -85,11 +85,11 @@ function makeFloor(r_x, r_y) {
 function makeSphere(deg, d, p, o, color) {
     var newFaces = SphereFaces.slice();
     var newVertex = SphereVertex.slice();
-    
+
     //Add faces
     for (var c = 0; c < deg; c++) {
         var length = newFaces.length; //newFaces.length increases over loop;
-        for(var n = 0; n < length; n++) {
+        for (var n = 0; n < length; n++) {
             var f = newFaces[0];
             var i = newVertex[f.a];
             var j = newVertex[f.b];
@@ -102,13 +102,13 @@ function makeSphere(deg, d, p, o, color) {
             newFaces.splice(0,1);
         }
     }
-    
+
     //Change size and position
-    for(var n = 0; n < newVertex.length; n++) {
+    for (var n = 0; n < newVertex.length; n++) {
         var v = newVertex[n];
         newVertex[n] = {x:(v.x*d.x), y:(v.y*d.y), z:(v.z*d.z)};
     }
-    
+
     var m = {x:0, y:0, z:0, xz:0, yz:0};
     var center = {x:0, y:0, z:0};
     Objects.push({v:newVertex, f:newFaces, center:center, p:p, o:o, m:m, color:color});
@@ -120,17 +120,17 @@ function makeCylinder(deg, d, p, o, color) {
     var newFaces = CylinderFaces.slice();
     var v_num = 4*(deg+2);
     var step = 2*Math.PI/v_num;
-    
+
     //Create points
-    for(var n = 0; n < v_num; n++) {
+    for (var n = 0; n < v_num; n++) {
         newVertex.push({x:Math.cos(n*step), y:Math.sin(n*step), z:n%2});
     }
     newVertex.push({x:0, y:0, z:0});
     newVertex.push({x:0, y:0, z:1});
     newVertex.push({x:0, y:0, z:.5});
-    
+
     //Change size
-    for(var n = 0; n < newVertex.length; n++) {
+    for (var n = 0; n < newVertex.length; n++) {
         var v = newVertex[n];
         newVertex[n] = {x:(v.x*d.x), y:(v.y*d.y), z:(v.z*d.z)};
     }
@@ -140,7 +140,7 @@ function makeCylinder(deg, d, p, o, color) {
         newFaces.push({a:n, b:(n+1)%v_num, c:(n+2)%v_num, i:1});
         newFaces.push({a:n, b:v_num + n%2, c:(n+2)%v_num, i:1});
     }
-    
+
     var m = {x:0, y:0, z:0, xz:0, yz:0};
     Objects.push({v:newVertex, f:newFaces, bottom:newVertex[v_num], top:newVertex[v_num+1], center:newVertex[v_num+2], p:p, o:o, m:m, color:color});
     return Objects[Objects.length-1];
@@ -199,7 +199,7 @@ function updateLocation(dest) {
         } else {
             //Path
             Heading={x:0, y:0};
-        } 
+        }
     } else {
         Heading={x:0, y:0};
     }
@@ -263,12 +263,12 @@ function findRoom(c_val) {
 function pointPosition(v, p, o, m) {
     var t_y;
     var a = {x:0, y:0, z:0};
-    
+
     t_y = v.y * Math.cos(o.yz * pi) + v.z * Math.sin(o.yz * pi);
     a.z = v.z * Math.cos(o.yz * pi) - v.y * Math.sin(o.yz * pi);
     a.x = v.x * Math.cos(o.xz * pi) - t_y * Math.sin(o.xz * pi);
     a.y = t_y * Math.cos(o.xz * pi) + v.x * Math.sin(o.xz * pi);
-    
+
     t_y = a.y * Math.cos(m.yz * pi) + a.z * Math.sin(m.yz * pi);
     a.z = a.z * Math.cos(m.yz * pi) - a.y * Math.sin(m.yz * pi);
     a.x = a.x * Math.cos(m.xz * pi) - t_y * Math.sin(m.xz * pi);
@@ -309,31 +309,31 @@ function RenderScene() {
     //Increment time
     TotalTime += .01;
     move();
-    
+
     // Render the background
     RenderBackground(150,0,0);
-    
+
     // Create an on-screen point list we will be working with
     var PointList = new Array();
-    
+
     //For each object
-    for(var n = 0; n < Objects.length; n++) {
+    for (var n = 0; n < Objects.length; n++) {
         var CVertex = Objects[n].v;
         var CFaces  = Objects[n].f;
         var p       = Objects[n].p;
         var o       = Objects[n].o;
         var m       = Objects[n].m;
         var color   = Objects[n].color;
-        
+
         // For each vertex point
-        for(var i = 0; i < CVertex.length; i++) {
+        for (var i = 0; i < CVertex.length; i++) {
             // The resulting vertex point we are working on
             // Note that we are creating a new object, not making a copy-reference
             var WorkingVertex = { x:CVertex[i].x, y:CVertex[i].y, z:CVertex[i].z };
-            
+
             // Apply object translation and rotation
             WorkingVertex = pointPosition(WorkingVertex, p, o, m);
-            
+
             //Adjust for camera translation and rotation
             WorkingVertex = cameraRotate(WorkingVertex);
 
@@ -348,7 +348,7 @@ function RenderScene() {
         }
 
         // For each face
-        for(var i = 0; i < CFaces.length; i++) {
+        for (var i = 0; i < CFaces.length; i++) {
             // Find the four points we are working on
             var PointA = PointList[CFaces[i].a];
             var PointB = PointList[CFaces[i].b];

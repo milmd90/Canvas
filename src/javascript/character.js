@@ -16,7 +16,7 @@ var SphereVertex =
     {x:-s3,  y:s3,   z:-s3},
     {x:s3,   y:s3,   z:-s3},
     {x:s3,   y:-s3,  z:-s3},
-    
+
     {x:0,   y:0,   z:1},
     {x:-1,  y:0,   z:0},
     {x:0,   y:1,   z:0},
@@ -32,31 +32,31 @@ var SphereFaces =
     { a:1, b:2, c:8, i:2 },
     { a:2, b:3, c:8, i:3 },
     { a:3, b:0, c:8, i:4 },
-    
+
     // Bottom
     { a:0, b:1, c:9, i:5 },
     { a:1, b:5, c:9, i:6 },
     { a:5, b:4, c:9, i:7 },
     { a:4, b:0, c:9, i:8 },
-    
+
     // Right
     { a:1, b:2, c:10, i:9 },
     { a:2, b:6, c:10, i:10 },
     { a:6, b:5, c:10, i:11 },
     { a:5, b:1, c:10, i:12 },
-        
+
     // Top
     { a:2, b:3, c:11, i:13 },
     { a:3, b:7, c:11, i:14 },
     { a:7, b:6, c:11, i:15 },
     { a:6, b:2, c:11, i:16 },
-    
+
     // Left
     { a:0, b:3, c:12, i:17 },
     { a:3, b:7, c:12, i:18 },
     { a:7, b:4, c:12, i:19 },
     { a:4, b:0, c:12, i:20 },
-    
+
     // Back
     { a:4, b:5, c:13, i:21 },
     { a:5, b:6, c:13, i:22 },
@@ -73,7 +73,7 @@ function Init() {
     CameraPos = {x:0, y:40, z:150};
     CameraRot = {x:0, y:0, z:0};
     CameraChange = {x:0, y:0, z:0};
-    
+
     makeCharacter();
 }
 
@@ -85,7 +85,7 @@ function makeCharacter() {
     makeCylinder(2, {x:3, y:3, z:30},  {x:0, y:0, z:0},    {yz:.5, xy:.8},  {R:100,G:100,B:100});//3
     makeCylinder(2, {x:1, y:1, z:3},   {x:0, y:0, z:0},    {yz:.5, xy:.9},  {R:100,G:100,B:100});//4
     makeSphere(1,   {x:4, y:5, z:8},   {x:0, y:0, z:0},    {yz:.5, xy:.9},  {R:100,G:100,B:100});//5
-    
+
     //Left Arm
     makeSphere(0,   {x:3, y:3, z:3},   {x:-15, y:47, z:0}, {yz:0,  xy:0},   {R:100,G:100,B:100});//6
     makeCylinder(2, {x:3, y:3, z:30},  {x:0, y:0, z:0},    {yz:.5, xy:-.05},{R:100,G:100,B:100});//7
@@ -93,7 +93,7 @@ function makeCharacter() {
     makeCylinder(2, {x:3, y:3, z:30},  {x:0, y:0, z:0},    {yz:.5, xy:0},   {R:100,G:100,B:100});//9
     makeCylinder(2, {x:1, y:1, z:3},   {x:0, y:0, z:0},    {yz:.5, xy:0},   {R:100,G:100,B:100});//10
     makeSphere(1,   {x:4, y:4, z:8},   {x:0, y:0, z:0},    {yz:.5, xy:0},   {R:100,G:100,B:100});//11
-    
+
     //Body
     makeCylinder(3, {x:15, y:5, z:50}, {x:0, y:50, z:0},   {yz:.5, xy:0},   {R:100,G:100,B:100});//12
     makeCylinder(2, {x:3, y:3, z:12},  {x:0, y:0, z:0},    {yz:-.5, xy:0},  {R:100,G:100,B:100});//13
@@ -103,11 +103,11 @@ function makeCharacter() {
 function makeSphere(deg, d, p, o, color) {
     var newFaces = SphereFaces.slice();
     var newVertex = SphereVertex.slice();
-    
+
     //Add faces
     for (var c = 0; c < deg; c++) {
         var length = newFaces.length; //newFaces.length increases over loop;
-        for(var n = 0; n < length; n++) {
+        for (var n = 0; n < length; n++) {
             var f = newFaces[0];
             var i = newVertex[f.a];
             var j = newVertex[f.b];
@@ -120,13 +120,13 @@ function makeSphere(deg, d, p, o, color) {
             newFaces.splice(0,1);
         }
     }
-    
+
     //Change size and position
-    for(var n = 0; n < newVertex.length; n++) {
+    for (var n = 0; n < newVertex.length; n++) {
         var v = newVertex[n];
         newVertex[n] = {x:(v.x*d.x), y:(v.y*d.y), z:(v.z*d.z)};
     }
-    
+
     var m = {x:0, y:0, z:0, xy:0, yz:0};
     var center = {x:0, y:0, z:0};
     Objects.push({v:newVertex, f:newFaces, center:center, p:p, o:o, m:m, color:color});
@@ -138,17 +138,17 @@ function makeCylinder(deg, d, p, o, color) {
     var newFaces = CylinderFaces.slice();
     var v_num = 4*(deg+2);
     var step = 2*Math.PI/v_num;
-    
+
     //Create points
-    for(var n = 0; n < v_num; n++) {
+    for (var n = 0; n < v_num; n++) {
         newVertex.push({x:Math.cos(n*step), y:Math.sin(n*step), z:n%2});
     }
     newVertex.push({x:0, y:0, z:0});
     newVertex.push({x:0, y:0, z:1});
     newVertex.push({x:0, y:0, z:.5});
-    
+
     //Change size
-    for(var n = 0; n < newVertex.length; n++) {
+    for (var n = 0; n < newVertex.length; n++) {
         var v = newVertex[n];
         newVertex[n] = {x:(v.x*d.x), y:(v.y*d.y), z:(v.z*d.z)};
     }
@@ -158,7 +158,7 @@ function makeCylinder(deg, d, p, o, color) {
         newFaces.push({a:n, b:(n+1)%v_num, c:(n+2)%v_num, i:1});
         newFaces.push({a:n, b:v_num + n%2, c:(n+2)%v_num, i:1});
     }
-    
+
     var m = {x:0, y:0, z:0, xy:0, yz:0};
     Objects.push({v:newVertex, f:newFaces, bottom:newVertex[v_num], top:newVertex[v_num+1], center:newVertex[v_num+2], p:p, o:o, m:m, color:color});
     return Objects[Objects.length-1];
@@ -169,19 +169,19 @@ function move() {
     var speed = .0001;
     CameraRot.x -= speed * CameraChange.x;
     CameraRot.y += speed * CameraChange.y;
-    
+
     var s = {
-        body:[12, 13, 14], 
+        body:[12, 13, 14],
         left_arm: [6, 7, 8, 9, 10, 11],
         right_arm: [0, 1, 2, 3, 4, 5]
     };
-    
+
     //Update movement vectors
     Objects[1].m.xy = .05 * Math.sin(3 * TotalTime);
     Objects[3].m.xy = .15 * Math.sin(3 * TotalTime - 1.5);
     Objects[4].m.xy = .1 * Math.sin(3 * TotalTime - 2);
     Objects[5].m.xy = Objects[4].m.xy;
-    
+
     //Link objects
     //Right arm
     link(s.right_arm[1], s.right_arm[0], "center");
@@ -189,14 +189,14 @@ function move() {
     link(s.right_arm[3], s.right_arm[2], "center");
     link(s.right_arm[4], s.right_arm[3], "top");
     link(s.right_arm[5], s.right_arm[4], "top");
-    
+
     //Left arm
     link(s.left_arm[1], s.left_arm[0], "center");
     link(s.left_arm[2], s.left_arm[1], "top");
     link(s.left_arm[3], s.left_arm[2], "center");
     link(s.left_arm[4], s.left_arm[3], "top");
     link(s.left_arm[5], s.left_arm[4], "top");
-    
+
     //Head
     link(s.body[1], s.body[0], "bottom");
     link(s.body[2], s.body[1], "top");
@@ -217,12 +217,12 @@ function link(a, b, i) {
 function pointPosition(v, p, o, m) {
     var t_y;
     var a = {x:0, y:0, z:0};
-    
+
     t_y = v.y * Math.cos(o.yz * pi) - v.z * Math.sin(o.yz * pi);
     a.z = v.z * Math.cos(o.yz * pi) + v.y * Math.sin(o.yz * pi);
     a.x = v.x * Math.cos(o.xy * pi) - t_y * Math.sin(o.xy * pi);
     a.y = t_y * Math.cos(o.xy * pi) + v.x * Math.sin(o.xy * pi);
-    
+
     t_y = a.y * Math.cos(m.yz * pi) - a.z * Math.sin(m.yz * pi);
     a.z = a.z * Math.cos(m.yz * pi) + a.y * Math.sin(m.yz * pi);
     a.x = a.x * Math.cos(m.xy * pi) - t_y * Math.sin(m.xy * pi);
@@ -263,31 +263,31 @@ function RenderScene() {
     //Increment time
     TotalTime += .01;
     move();
-    
+
     // Render the background
     RenderBackground(150,0,0);
-    
+
     // Create an on-screen point list we will be working with
     var PointList = new Array();
-    
+
     //For each object
-    for(var n = 0; n < Objects.length; n++) {
+    for (var n = 0; n < Objects.length; n++) {
         var CVertex = Objects[n].v;
         var CFaces  = Objects[n].f;
         var p       = Objects[n].p;
         var o       = Objects[n].o;
         var m       = Objects[n].m;
         var color   = Objects[n].color;
-        
+
         // For each vertex point
-        for(var i = 0; i < CVertex.length; i++) {
+        for (var i = 0; i < CVertex.length; i++) {
             // The resulting vertex point we are working on
             // Note that we are creating a new object, not making a copy-reference
             var WorkingVertex = { x:CVertex[i].x, y:CVertex[i].y, z:CVertex[i].z };
-            
+
             // Apply object translation and rotation
             WorkingVertex = pointPosition(WorkingVertex, p, o, m);
-            
+
             //Adjust for camera translation and rotation
             WorkingVertex = cameraRotate(WorkingVertex);
 
@@ -302,7 +302,7 @@ function RenderScene() {
         }
 
         // For each face
-        for(var i = 0; i < CFaces.length; i++) {
+        for (var i = 0; i < CFaces.length; i++) {
             // Find the four points we are working on
             var PointA = PointList[CFaces[i].a];
             var PointB = PointList[CFaces[i].b];

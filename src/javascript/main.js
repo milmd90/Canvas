@@ -1,24 +1,24 @@
 /***************************************************************
- 
+
  3D Tutorial - Core S2 Software Solutions -Copyright 2012
  Learn more at www.cores2.com
- 
+
  This source file is developed and maintained by:
    + Jeremy Bridon jbridon@cores2.com
- 
+
  File:
    main.js
- 
+
  Description:
    Main application entry point; connects to the canvas HTML 5
    element and starts the rendering cycle, managing performance
    and throttling as needed. Also does double-buffering by creating
    and swapping an internal Canvas buffer.
-   
+
    To interface with this, you must create another JavaScript
    file that implements the "Init()" and "RenderScene()"
    functions.
-   
+
 ***************************************************************/
 
 /*** Public Variables (Read Only) ***/
@@ -64,24 +64,24 @@ function Main() {
     // Get context handles
     CanvasHandle = document.getElementById("SampleCanvas");
     ContextHandle = CanvasHandle.getContext("2d");
-    
+
     // Get the canvas size
     CanvasWidth = ContextHandle.canvas.clientWidth;
     CanvasHeight = ContextHandle.canvas.clientHeight;
-    
+
     // Get the canvas center
     CenterX = CanvasWidth / 2;
     CenterY = CanvasHeight / 2;
-    
+
     // Create an image backbuffer
     BackCanvasHandle = document.createElement("canvas");
     BackCanvasHandle.width = CanvasWidth;
     BackCanvasHandle.height = CanvasHeight;
     BackContextHandle = BackCanvasHandle.getContext("2d");
-    
+
     // Call the custom init function
     Init();
-    
+
     // Start the render cycle
     RenderLoop();
 }
@@ -93,53 +93,53 @@ function RenderLoop()
 {
     // Start timing this render cycle
     var StartTime = new Date();
-    
+
     // Clear backbuffer
     BackContextHandle.clearRect(0, 0, CanvasWidth, CanvasHeight);
-    
+
     // Save context state
     BackContextHandle.save();
-    
+
     // Render the scene
     RenderScene(BackContextHandle);
-    
+
     // Restore the context state
     BackContextHandle.restore();
-    
+
     // Swap the backbuffer with the frontbuffer
     // We take the contents of the backbuffer and draw onto the front buffer
     var ImageData = BackContextHandle.getImageData(0, 0, CanvasWidth, CanvasHeight);
     ContextHandle.putImageData(ImageData, 0, 0);
-    
+
     // End time
     var EndTime = new Date();
-     
+
     // Measure the difference
     // Note that "value of" returns millis, we divide back into seconds
     var TimeElapsed = (EndTime.valueOf() - StartTime.valueOf()) / 1000;
     var SleepTime = TargetFrameTime - TimeElapsed;
-    
+
     // If target sleep time is negative, simply don't sleep
     // This is in cases where we take longer than intended to render a scene
-    if(SleepTime < 0)
+    if (SleepTime < 0)
         SleepTime = 0;
-    
+
     // Calculate the cycle time of how long it took to execute this frame
     var CycleTime = TimeElapsed + SleepTime;
-    
+
     // Calculate FPS when needed
     FrameRateTime += CycleTime;
     if (FrameRateTime >= FrameRateRefresh)
     {
         // Post FPS
         var FPS = FrameRateCount / FrameRateRefresh;
-        document.getElementById("FPSTextBox").value = FPS + " / " + (1 / TargetFrameTime);
-        
+        document.getElementById("FPSTextBox").innerHTML = FPS + " / " + (1 / TargetFrameTime);
+
         // Reset time and frame count
         FrameRateTime = 0;
         FrameRateCount = 0;
     }
-    
+
     // Grow frame count
     FrameRateCount++;
 
@@ -156,22 +156,22 @@ function RenderPoint(x, y, width, color)
 {
     // Shortext context handle
     var ctx = BackContextHandle;
-    
+
     // Save context
     ctx.save();
-    
+
     // Set color
-    if(color !== undefined)
+    if (color !== undefined)
         ctx.fillStyle = "rgb(" + color.R + "," + color.G + "," + color.B + ")";
     else
         ctx.fillStyle = "rgb(0, 0, 0)";
-    
+
     // Draw from point to point
     ctx.fillRect(x - width/2, y - width/2, width, width);
-    
+
     // Revert context
     ctx.restore();
-    
+
     // Done rendering line
 }
 
@@ -180,31 +180,31 @@ function RenderLine(x1, y1, x2, y2, width, color)
 {
     // Shortext context handle
     var ctx = BackContextHandle;
-    
+
     // Save context
     ctx.save();
-    
+
     // Set width and cap style
     ctx.lineWidth = width;
     ctx.lineCap = "butt";
     ctx.lineJoin = "round";
-    
+
     // Set color
-    if(color !== undefined)
+    if (color !== undefined)
         ctx.strokeStyle = "rgb(" + color.R + "," + color.G + "," + color.B + ")";
     else
         ctx.strokeStyle = "rgb(0, 0, 0)";
-    
+
     // Draw from point to point
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.closePath();
     ctx.stroke();
-    
+
     // Revert context
     ctx.restore();
-    
+
     // Done rendering line
 }
 
@@ -213,21 +213,21 @@ function RenderTriangle(x1, y1, x2, y2, x3, y3, width, color)
 {
     // Shortext context handle
     var ctx = BackContextHandle;
-    
+
     // Save context
     ctx.save();
-    
+
     // Set width and cap style
     ctx.lineWidth = width;
     ctx.lineCap = "butt";
     ctx.lineJoin = "round";
-    
+
     // Set color
-    if(color !== undefined)
+    if (color !== undefined)
         ctx.strokeStyle = "rgb(" + color.R + "," + color.G + "," + color.B + ")";
     else
         ctx.strokeStyle = "rgb(0, 0, 0)";
-    
+
     // Draw from point to point
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -235,33 +235,32 @@ function RenderTriangle(x1, y1, x2, y2, x3, y3, width, color)
     ctx.lineTo(x3, y3);
     ctx.closePath();
     ctx.stroke();
-    
+
     // Revert context
     ctx.restore();
-    
+
     // Done rendering triangle
 }
 
 // Render a triangle given three points, a width, and a color
-function RenderFillTriangle(x1, y1, x2, y2, x3, y3, width, color)
-{
+function RenderFillTriangle(x1, y1, x2, y2, x3, y3, width, color) {
     // Shortext context handle
     var ctx = BackContextHandle;
-    
+
     // Save context
     ctx.save();
-    
+
     // Set width and cap style
     ctx.lineWidth = width;
     ctx.lineCap = "butt";
     ctx.lineJoin = "round";
-    
+
     // Set color
-    if(color !== undefined)
+    if (color !== undefined)
         ctx.fillStyle = "rgb(" + color.R + "," + color.G + "," + color.B + ")";
     else
         ctx.fillStyle = "rgb(0, 0, 0)";
-    
+
     // Draw from point to point
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -269,10 +268,10 @@ function RenderFillTriangle(x1, y1, x2, y2, x3, y3, width, color)
     ctx.lineTo(x3, y3);
     ctx.closePath();
     ctx.fill();
-    
+
     // Revert context
     ctx.restore();
-    
+
     // Done rendering triangle
 }
 
