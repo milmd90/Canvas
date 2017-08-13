@@ -58,10 +58,13 @@
 
                 //Files with html submenu
                 switch (module) {
-                    case '':
+                    case 'design':
                         $( ".submenu" ).load( module + '.html', function () {
                             console.log('Loaded '+module + '.html');
                         } );
+                        break;
+                    default :
+                        $( ".submenu" ).empty();
                 }
 
                 //Files with js
