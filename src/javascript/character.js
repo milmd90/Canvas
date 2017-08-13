@@ -1,72 +1,3 @@
-/*
-var s3 = 1.0 / Math.sqrt(3);
-var pi = Math.PI;
-var cos60 = Math.cos(60.0/pi);
-var sin60 = Math.sin(60.0/pi);
-var cos30 = Math.cos(30.0/pi);
-var sin30 = Math.sin(30.0/pi);
-
-var SphereVertex =
-[
-    {x:-s3,  y:-s3,  z:s3},
-    {x:-s3,  y:s3,   z:s3},
-    {x:s3,   y:s3,   z:s3},
-    {x:s3,   y:-s3,  z:s3},
-    {x:-s3,  y:-s3,  z:-s3},
-    {x:-s3,  y:s3,   z:-s3},
-    {x:s3,   y:s3,   z:-s3},
-    {x:s3,   y:-s3,  z:-s3},
-
-    {x:0,   y:0,   z:1},
-    {x:-1,  y:0,   z:0},
-    {x:0,   y:1,   z:0},
-    {x:1,   y:0,   z:0},
-    {x:0,   y:-1,  z:0},
-    {x:0,   y:0,   z:-1}
-];
-
-var SphereFaces =
-[
-     // Front
-    { a:0, b:1, c:8, i:1 },
-    { a:1, b:2, c:8, i:2 },
-    { a:2, b:3, c:8, i:3 },
-    { a:3, b:0, c:8, i:4 },
-
-    // Bottom
-    { a:0, b:1, c:9, i:5 },
-    { a:1, b:5, c:9, i:6 },
-    { a:5, b:4, c:9, i:7 },
-    { a:4, b:0, c:9, i:8 },
-
-    // Right
-    { a:1, b:2, c:10, i:9 },
-    { a:2, b:6, c:10, i:10 },
-    { a:6, b:5, c:10, i:11 },
-    { a:5, b:1, c:10, i:12 },
-
-    // Top
-    { a:2, b:3, c:11, i:13 },
-    { a:3, b:7, c:11, i:14 },
-    { a:7, b:6, c:11, i:15 },
-    { a:6, b:2, c:11, i:16 },
-
-    // Left
-    { a:0, b:3, c:12, i:17 },
-    { a:3, b:7, c:12, i:18 },
-    { a:7, b:4, c:12, i:19 },
-    { a:4, b:0, c:12, i:20 },
-
-    // Back
-    { a:4, b:5, c:13, i:21 },
-    { a:5, b:6, c:13, i:22 },
-    { a:6, b:7, c:13, i:23 },
-    { a:7, b:4, c:13, i:24 }
-];
-var CylinderVertex = [];
-var CylinderFaces = [];
-*/
-
 var Objects = [];
 
 function Init() {
@@ -313,3 +244,46 @@ function RenderScene() {
         }
     }
 }
+
+$("#SampleCanvas")
+    .mousedown(function(e) {
+        var init_x = e.pageX;
+        var init_y = e.pageY;
+
+        $(window).mousemove(function(e) {
+            CameraChange.x = e.pageY - init_y;
+            CameraChange.y = e.pageX - init_x;
+        });
+
+        return false;
+    })
+    .mouseup(function() {
+        $(window).unbind("mousemove");
+        CameraChange.x = 0;
+        CameraChange.y = 0;
+        return false;
+    });
+
+var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+$("#SampleCanvas").bind(mousewheelevt, function(e){
+    var evt = window.event || e; //equalize event object
+    evt = evt.originalEvent ? evt.originalEvent : evt; //convert to originalEvent if possible
+    var delta = evt.detail ? evt.detail*(-40) : evt.wheelDelta; //check for detail first, because it is used by Opera and FF
+    if (delta > 1) {
+        CameraPos.z -= 3;
+    } else {
+        CameraPos.z += 3;
+    }
+});
+
+$('body').on('keydown keyup',function(e){
+    if (e.type==="keydown") {
+        if (e.which===38) {
+            CameraPos.z -= 1;
+        } else if (e.which===40) {
+            CameraPos.z += 1;
+        }
+    } else {
+        //Do Nothing
+    }
+});

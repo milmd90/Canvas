@@ -1,5 +1,4 @@
 var speed = 1;
-//var s3 = 1.0 / Math.sqrt(3);
 
 var SolarSystem = [
     {n:"Sun",     s:76.70, r:0.0,  o:0, w:0, c:{R:255,G:255,B:0}},
@@ -12,67 +11,6 @@ var SolarSystem = [
     {n:"Uranus",  s:2.576, r:95.4, o:0, w:0, c:{R:0  ,G:255,B:255}},
     {n:"Neptune", s:2.494, r:150,  o:0, w:0, c:{R:0  ,G:255,B:255}}
 ];
-
-/*
-var SphereVertex =
-[
-    {x:-s3,  y:-s3,  z:s3},
-    {x:-s3,  y:s3,   z:s3},
-    {x:s3,   y:s3,   z:s3},
-    {x:s3,   y:-s3,  z:s3},
-    {x:-s3,  y:-s3,  z:-s3},
-    {x:-s3,  y:s3,   z:-s3},
-    {x:s3,   y:s3,   z:-s3},
-    {x:s3,   y:-s3,  z:-s3},
-
-    {x:0,   y:0,   z:1},
-    {x:-1,  y:0,   z:0},
-    {x:0,   y:1,   z:0},
-    {x:1,   y:0,   z:0},
-    {x:0,   y:-1,  z:0},
-    {x:0,   y:0,   z:-1}
-];
-
-var SphereFaces =
-[
-     // Front
-    { a:0, b:1, c:8, i:1 },
-    { a:1, b:2, c:8, i:2 },
-    { a:2, b:3, c:8, i:3 },
-    { a:3, b:0, c:8, i:4 },
-
-    // Bottom
-    { a:0, b:1, c:9, i:5 },
-    { a:1, b:5, c:9, i:6 },
-    { a:5, b:4, c:9, i:7 },
-    { a:4, b:0, c:9, i:8 },
-
-    // Right
-    { a:1, b:2, c:10, i:9 },
-    { a:2, b:6, c:10, i:10 },
-    { a:6, b:5, c:10, i:11 },
-    { a:5, b:1, c:10, i:12 },
-
-    // Top
-    { a:2, b:3, c:11, i:13 },
-    { a:3, b:7, c:11, i:14 },
-    { a:7, b:6, c:11, i:15 },
-    { a:6, b:2, c:11, i:16 },
-
-    // Left
-    { a:0, b:3, c:12, i:17 },
-    { a:3, b:7, c:12, i:18 },
-    { a:7, b:4, c:12, i:19 },
-    { a:4, b:0, c:12, i:20 },
-
-    // Back
-    { a:4, b:5, c:13, i:21 },
-    { a:5, b:6, c:13, i:22 },
-    { a:6, b:7, c:13, i:23 },
-    { a:7, b:4, c:13, i:24 }
-];
-
-*/
 
 function makeSphere(deg, d_x, d_y, d_z, p_x, p_y, p_z, color) {
     var newFaces = SphereFaces.slice();
@@ -227,5 +165,3 @@ function RenderScene() {
         }
     }
 }
-
-Main();

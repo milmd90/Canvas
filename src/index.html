@@ -6,7 +6,9 @@
         <title>Canvas</title>
         <link href="css/practice.css" rel="stylesheet" type="text/css"/>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <!-- <script language="javascript" src="javascript/index.js" type="text/javascript"></script> -->
+        <script language="javascript" src="javascript/index.js" type="text/javascript"></script>
+        <script language="javascript" src="javascript/shapes.js" type="text/javascript"></script>
+        <script language="javascript" src="javascript/main.js" type="text/javascript"></script>
     </head>
 
     <body>
@@ -49,16 +51,28 @@
         </div>
     </body>
 
-
-    <!-- <script language="javascript" src="javascript/index.js" type="text/javascript"></script> -->
-
     <script>
-        (function () {
+        $( document ).ready(function() {
             $('.canvasLoad').click(function () {
                 var module = $(this).attr('id');
-                $( ".submenu" ).load( module + '.html' );
-            });
-        })();
-    </script>
 
+                //Files with html submenu
+                switch (module) {
+                    case '':
+                        $( ".submenu" ).load( module + '.html', function () {
+                            console.log('Loaded '+module + '.html');
+                        } );
+                }
+
+                //Files with js
+                switch (module) {
+                    default:
+                        $.getScript( 'javascript/' + module + '.js' , function () {
+                            console.log('Loaded '+module + '.js');
+                            Main();
+                        });
+                }
+            });
+        });
+    </script>
 </html>
