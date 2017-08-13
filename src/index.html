@@ -1,14 +1,64 @@
 <!DOCTYPE html>
 <html>
+
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Canvas</title>
+        <link href="css/practice.css" rel="stylesheet" type="text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- <script language="javascript" src="javascript/index.js" type="text/javascript"></script> -->
     </head>
+
     <body>
-        <a href="model.html">Solar System</a>
-        <a href="character.html">Character</a>
-        <a href="maze.html">Maze</a>
-        <a href="cube.html">Cube</a>
-        <a href="design.html">Design</a>
+        <div class="menu">
+            <div class="mainMenu">
+                <ul>
+                    <li id="model" class="canvasLoad">
+                        Solar System
+                    </li>
+                    <li id="character" class="canvasLoad">
+                        Character
+                    </li>
+                    <li id="maze" class="canvasLoad">
+                        Maze
+                    </li>
+                    <li id="cube" class="canvasLoad">
+                        Cube
+                    </li>
+                    <li id="design" class="canvasLoad">
+                        Design
+                    </li>
+                </ul>
+            </div><br/>
+
+            <div class="submenu">
+
+            </div>
+        </div>
+
+        <div class="canvas">
+
+            <!-- Canvas Content -->
+            <canvas id="SampleCanvas" width="800" height="800">
+                Sorry, but it looks like your browser does not support the Canvas tag.
+            </canvas><br>
+
+            <!-- FPS Counter-->
+            Frames per Second: <div id="FPSTextBox"/>
+            <br>
+        </div>
     </body>
+
+
+    <!-- <script language="javascript" src="javascript/index.js" type="text/javascript"></script> -->
+
+    <script>
+        (function () {
+            $('.canvasLoad').click(function () {
+                var module = $(this).attr('id');
+                $( ".submenu" ).load( module + '.html' );
+            });
+        })();
+    </script>
+
 </html>

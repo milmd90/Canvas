@@ -3,8 +3,6 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html;  ">
         <title>Character</title>
-        <link href="css/practice.css" rel="stylesheet" type="text/css"/>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script language="javascript" src="javascript/main.js" type="text/javascript"></script>
         <script language="javascript" src="javascript/shapes.js" type="text/javascript"></script>
         <script language="javascript" src="javascript/character.js" type="text/javascript"></script>
@@ -15,15 +13,14 @@
 
         <div style="text-align: center;">
 
-            <!-- Title -->
-
             <!-- Canvas Content -->
             <canvas id="SampleCanvas" width="800" height="800">
                 Sorry, but it looks like your browser does not support the Canvas tag.
             </canvas><br>
 
             <!-- FPS Counter-->
-            Frames per Second: <input type="text" name="FPSTextBox" id="FPSTextBox" readonly="readonly" size="10" value="Calculating..."><br>
+            Frames per Second: <span id="FPSTextBox"/>
+            <br>
         </div>
 
         <script>

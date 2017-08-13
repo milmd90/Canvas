@@ -227,3 +227,5 @@ function RenderScene() {
         }
     }
 }
+
+Main();

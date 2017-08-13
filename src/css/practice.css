@@ -1,0 +1,14 @@
+div, span {
+    border: black solid 1px;
+    padding: 10px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.menu {
+    width: 25%;
+}
+
+.canvas {
+    width: 70%;
+}
