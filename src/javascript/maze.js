@@ -1,6 +1,4 @@
-var Objects = [];
-var Spin = [];
-
+// Interface functions
 function Init() {
     Location = {x:3, y:0, r_x:1, r_y:0};
     Heading = {x:0, y:0};
@@ -8,12 +6,67 @@ function Init() {
     CameraPos = {x:-Dimension.r_x*Dimension.x/2, y:Dimension.r_y*Dimension.y/2, z:30};
     //CameraPos = {x:0, y:0, z:30};
     CameraRot = {x:0, y:0, z:0};
-    WaitTime = 10;
+    // WaitTime = 10;
 
     makeBoard();
 }
 
-var character;
+function RenderScene() {
+    //Increment time
+    TotalTime += .01;
+    moveMaze();
+
+    // Render the background
+    RenderBackground(150,0,0);
+
+    // Create an on-screen point list we will be working with
+    var PointList = new Array();
+
+    //For each object
+    for (var n = 0; n < Objects.length; n++) {
+        var CVertex = Objects[n].v;
+        var CFaces  = Objects[n].f;
+        var p       = Objects[n].p;
+        var o       = Objects[n].o;
+        var m       = Objects[n].m;
+        var color   = Objects[n].color;
+
+        // For each vertex point
+        for (var i = 0; i < CVertex.length; i++) {
+            // The resulting vertex point we are working on
+            // Note that we are creating a new object, not making a copy-reference
+            var WorkingVertex = { x:CVertex[i].x, y:CVertex[i].y, z:CVertex[i].z };
+
+            // Apply object translation and rotation
+            WorkingVertex = pointPosition(WorkingVertex, p, o, m);
+
+            //Adjust for camera translation and rotation
+            WorkingVertex = cameraRotate(WorkingVertex);
+
+            // Convert from x,y,z to x,y
+            // This is called a projection transform
+            // We are projecting from 3D back to 2D
+            var ScreenX = (RatioConst * (WorkingVertex.x)) / WorkingVertex.z;
+            var ScreenY = (RatioConst * (WorkingVertex.y)) / WorkingVertex.z;
+
+            // Save this on-screen position to render the line locations
+            PointList[i] = {x:CenterX + ScreenX, y:CenterY + ScreenY};
+        }
+
+        // For each face
+        for (var i = 0; i < CFaces.length; i++) {
+            // Find the four points we are working on
+            var PointA = PointList[CFaces[i].a];
+            var PointB = PointList[CFaces[i].b];
+            var PointC = PointList[CFaces[i].c];
+
+            // Render the face by looking up our vertex list
+            RenderTriangle(PointA.x, PointA.y, PointB.x, PointB.y, PointC.x, PointC.y, 1, color);
+        }
+    }
+}
+
+// Maze functions
 function makeBoard() {
     //Clear board
     Objects = [];
@@ -29,12 +82,12 @@ function makeBoard() {
     }
 
     //Character
-    character = makeCylinder(3, {x:.5, y:.5, z:-1}, {x:Location.x+Location.r_x*Dimension.x, y:Location.y+Location.r_y*Dimension.y, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
+    character = makeCylinderM(3, {x:.5, y:.5, z:-1}, {x:Location.x+Location.r_x*Dimension.x, y:Location.y+Location.r_y*Dimension.y, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
 
     //Orientation
-    //makeSphere(1, {x:2, y:.01, z:.01}, {x:3, y:0, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
-    //makeSphere(1, {x:.01, y:1, z:.01}, {x:0, y:2, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
-    //makeSphere(1, {x:.01, y:.01, z:1}, {x:0, y:0, z:2}, {yz:0, xz:0}, {R:255, G:255, B:255});
+    //makeSphereM(1, {x:2, y:.01, z:.01}, {x:3, y:0, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
+    //makeSphereM(1, {x:.01, y:1, z:.01}, {x:0, y:2, z:0}, {yz:0, xz:0}, {R:255, G:255, B:255});
+    //makeSphereM(1, {x:.01, y:.01, z:1}, {x:0, y:0, z:2}, {yz:0, xz:0}, {R:255, G:255, B:255});
 }
 
 function makeHiddenRoom(r_x, r_y) {
@@ -68,13 +121,13 @@ function makeFloor(r_x, r_y) {
                 var tele = TeleportMap[t].s;
                 if (tele.x === x && tele.y === y && tele.r_x === r_x && tele.r_y === r_y) {
                     tele = TeleportMap[t].e;
-                    Spin.push(makeSphere(0, {x:.5, y:.5, z:.5}, {x:center.x, y:center.y, z:center.z-1}, o, Colors[tele.r_x][tele.r_y]));
+                    Spin.push(makeSphereM(0, {x:.5, y:.5, z:.5}, {x:center.x, y:center.y, z:center.z-1}, o, Colors[tele.r_x][tele.r_y]));
                     break;
                 }
                 tele = TeleportMap[t].e;
                 if (tele.x === x && tele.y === y && tele.r_x === r_x && tele.r_y === r_y) {
                     tele = TeleportMap[t].s;
-                    Spin.push(makeSphere(0, {x:.5, y:.5, z:.5}, {x:center.x, y:center.y, z:center.z-1}, o, Colors[tele.r_x][tele.r_y]));
+                    Spin.push(makeSphereM(0, {x:.5, y:.5, z:.5}, {x:center.x, y:center.y, z:center.z-1}, o, Colors[tele.r_x][tele.r_y]));
                     break;
                 }
             }
@@ -82,71 +135,7 @@ function makeFloor(r_x, r_y) {
     }
 }
 
-function makeSphere(deg, d, p, o, color) {
-    var newFaces = SphereFaces.slice();
-    var newVertex = SphereVertex.slice();
-
-    //Add faces
-    for (var c = 0; c < deg; c++) {
-        var length = newFaces.length; //newFaces.length increases over loop;
-        for (var n = 0; n < length; n++) {
-            var f = newFaces[0];
-            var i = newVertex[f.a];
-            var j = newVertex[f.b];
-            var r = {x:(i.x+j.x), y:(i.y+j.y), z:(i.z+j.z)};
-            var mag = (Math.sqrt(Math.pow(r.x,2)+Math.pow(r.y,2)+Math.pow(r.z,2)));
-            r = {x:(r.x/mag), y:(r.y/mag), z:(r.z/mag)};
-            newVertex.push(r);
-            newFaces.push({a:f.a, b:f.c, c:newVertex.length-1, i:2*n});
-            newFaces.push({a:f.b, b:f.c, c:newVertex.length-1, i:2*n+1});
-            newFaces.splice(0,1);
-        }
-    }
-
-    //Change size and position
-    for (var n = 0; n < newVertex.length; n++) {
-        var v = newVertex[n];
-        newVertex[n] = {x:(v.x*d.x), y:(v.y*d.y), z:(v.z*d.z)};
-    }
-
-    var m = {x:0, y:0, z:0, xz:0, yz:0};
-    var center = {x:0, y:0, z:0};
-    Objects.push({v:newVertex, f:newFaces, center:center, p:p, o:o, m:m, color:color});
-    return Objects[Objects.length-1];
-}
-
-function makeCylinder(deg, d, p, o, color) {
-    var newVertex = CylinderVertex.slice();
-    var newFaces = CylinderFaces.slice();
-    var v_num = 4*(deg+2);
-    var step = 2*Math.PI/v_num;
-
-    //Create points
-    for (var n = 0; n < v_num; n++) {
-        newVertex.push({x:Math.cos(n*step), y:Math.sin(n*step), z:n%2});
-    }
-    newVertex.push({x:0, y:0, z:0});
-    newVertex.push({x:0, y:0, z:1});
-    newVertex.push({x:0, y:0, z:.5});
-
-    //Change size
-    for (var n = 0; n < newVertex.length; n++) {
-        var v = newVertex[n];
-        newVertex[n] = {x:(v.x*d.x), y:(v.y*d.y), z:(v.z*d.z)};
-    }
-
-    //Make faces
-    for (var n = 0; n < v_num; n++) {
-        newFaces.push({a:n, b:(n+1)%v_num, c:(n+2)%v_num, i:1});
-        newFaces.push({a:n, b:v_num + n%2, c:(n+2)%v_num, i:1});
-    }
-
-    var m = {x:0, y:0, z:0, xz:0, yz:0};
-    Objects.push({v:newVertex, f:newFaces, bottom:newVertex[v_num], top:newVertex[v_num+1], center:newVertex[v_num+2], p:p, o:o, m:m, color:color});
-    return Objects[Objects.length-1];
-}
-
-function move() {
+function moveMaze() {
     for (var obj = 0; obj < Spin.length; obj++) {
         Spin[obj].m.xz += .01;
         Spin[obj].m.z = .5 * Math.sin(TotalTime) - 1;
@@ -278,220 +267,4 @@ function pointPosition(v, p, o, m) {
     return w;
 }
 
-function cameraRotate(v){
-    var cosX = Math.cos(CameraRot.x * pi);
-    var cosY = Math.cos(CameraRot.y * pi);
-    var cosZ = Math.cos(CameraRot.z * pi);
-    var sinX = Math.sin(CameraRot.x * pi);
-    var sinY = Math.sin(CameraRot.y * pi);
-    var sinZ = Math.sin(CameraRot.z * pi);
-
-    var Temp = v.z;
-    v.z = -v.x * sinY - v.z * cosY;
-    v.x = -v.x * cosY + Temp * sinY;
-
-    Temp = v.z;
-    v.z = -v.y * sinX + v.z * cosX;
-    v.y = v.y * cosX + Temp * sinX;
-
-    Temp = v.x;
-    v.x = v.x * cosZ - v.y * sinZ;
-    v.y = v.y * cosZ + Temp * sinZ;
-
-    // Apply camera translation
-    v.x -= CameraPos.x;
-    v.y -= CameraPos.y;
-    v.z -= CameraPos.z;
-    return v;
-}
-
-function RenderScene() {
-    //Increment time
-    TotalTime += .01;
-    move();
-
-    // Render the background
-    RenderBackground(150,0,0);
-
-    // Create an on-screen point list we will be working with
-    var PointList = new Array();
-
-    //For each object
-    for (var n = 0; n < Objects.length; n++) {
-        var CVertex = Objects[n].v;
-        var CFaces  = Objects[n].f;
-        var p       = Objects[n].p;
-        var o       = Objects[n].o;
-        var m       = Objects[n].m;
-        var color   = Objects[n].color;
-
-        // For each vertex point
-        for (var i = 0; i < CVertex.length; i++) {
-            // The resulting vertex point we are working on
-            // Note that we are creating a new object, not making a copy-reference
-            var WorkingVertex = { x:CVertex[i].x, y:CVertex[i].y, z:CVertex[i].z };
-
-            // Apply object translation and rotation
-            WorkingVertex = pointPosition(WorkingVertex, p, o, m);
-
-            //Adjust for camera translation and rotation
-            WorkingVertex = cameraRotate(WorkingVertex);
-
-            // Convert from x,y,z to x,y
-            // This is called a projection transform
-            // We are projecting from 3D back to 2D
-            var ScreenX = (RatioConst * (WorkingVertex.x)) / WorkingVertex.z;
-            var ScreenY = (RatioConst * (WorkingVertex.y)) / WorkingVertex.z;
-
-            // Save this on-screen position to render the line locations
-            PointList[i] = {x:CenterX + ScreenX, y:CenterY + ScreenY};
-        }
-
-        // For each face
-        for (var i = 0; i < CFaces.length; i++) {
-            // Find the four points we are working on
-            var PointA = PointList[CFaces[i].a];
-            var PointB = PointList[CFaces[i].b];
-            var PointC = PointList[CFaces[i].c];
-
-            // Render the face by looking up our vertex list
-            RenderTriangle(PointA.x, PointA.y, PointB.x, PointB.y, PointC.x, PointC.y, 1, color);
-        }
-    }
-}
-
-$('body').on('keydown',function(e) {
-    if (Heading.x === 0 && Heading.y === 0) {
-        if (e.which===37) {
-            Heading.x = -1;
-        } else if (e.which===38) {
-            Heading.y = 1;
-        } else if (e.which===39) {
-            Heading.x = 1;
-        } else if (e.which===40) {
-            Heading.y = -1;
-        }
-    }
-});
-
-var Level0 =
-   [[-3, -3, -3, -1, -1, -1,  3],
-    [-3, -2, -3, -1, -2, -2, -2],
-    [-3, -2, -3, -1, -2, -2, -2],
-    [-3, -2, -3, -1, -2, -1, -2],
-    [-3, -2, -3, -1, -2, -1,  3],
-    [-3, -2, -3, -1, -2, -1,  3],
-    [-3,  1, -3,  1, -2, -2, -2]];
-
-var Level1 =
-   [[-3,  0, -3,  0, -2, -2, -2],
-    [-3, -2, -3, -1, -2, -2, -2],
-    [-3, -3, -3, -1, -2, -2, -2],
-    [-1, -1, -1, -1, -1, -1,  4],
-    [-3, -3, -3, -1, -2, -2, -2],
-    [-3, -2, -3, -1, -2, -2, -2],
-    [-3,  2, -3,  2, -2, -2, -2]];
-
-var Level2 =
-   [[-3,  1, -3,  1, -2, -2, -2],
-    [-3, -2, -3, -1, -2, -1, -2],
-    [-3, -2, -3, -1, -2, -1,  5],
-    [-3, -2, -3, -1, -2, -1,  5],
-    [-3, -2, -3, -1, -2, -2, -2],
-    [-3, -2, -3, -1, -2, -2, -2],
-    [-3, -3, -3, -1, -1, -1,  5]];
-
-var Level3 =
-   [[ 0, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -3],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [ 0, -2, -2, -3, -2, -2, -2],
-    [ 4, -3, -2, -2, -2,  4, -3]];
-
-var Level4 =
-   [[ 3, -2, -2, -2, -3,  3, -3],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -1, -2, -2, -2, -2, -1],
-    [ 1, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -1, -2, -2, -1, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [ 5, -2, -2, -2, -2, -2, -2]];
-
-var Level5 =
-   [[ 4, -2, -2, -3, -2, -2, -2],
-    [ 2, -2, -2, -2, -1, -2, -2],
-    [-2, -2, -2, -3, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -3],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [ 2, -2, -2, -2, -2, -2, -2]];
-
-var Level6 =
-   [[-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-3, -1, -2, -2, -2, -1, -1],
-    [-1, -1, -3,  7, -3, -1, -1]];
-
-var Level7 =
-   [[-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, 10],
-    [-2, -2, -2, -3, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2]];
-
-var Level8 =
-   [[-2, -2, -2, -3, -2, -2, -2],
-    [-1, -2, -1, -2, -2, -2, -2],
-    [-1, -2, -2, -2, -3, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -1, -2, -2, -2],
-    [-3, -3, -3, -3, -3, -3, -3],
-    [-2, -2, -2, -2, -2, -2, -2]];
-
-var Level9 =
-   [[-2, -2, -2, -2, -3, -2, -2],
-    [-3, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -3, -3, -2, -2, -3, -3],
-    [-2, -3, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-3, -2, -2, -2, -2, -3, -2]];
-
-var Level10 =
-   [[-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -3],
-    [-2, -2, -2, -2, -2, -2, -1],
-    [-2, -2, -2, -2, -2, -2, -3],
-    [-2, -2, -2, -2, -2, -2, -2],
-    [-2, -2, -2, -2, -2, -2, -2]];
-
-var Level11 =
-   [[10, -2, -3, -2, -2, -2, 10],
-    [-2, -2, -2, -2, -2, -2, -1],
-    [-2, -2, -2, -2, -3, -2, -1],
-    [-2, -2, -2, -2, -2, -2, -1],
-    [-2, -2, -2, -2, -2, -2, -1],
-    [-2, -2, -2, -2, -3, -2, -1],
-    [-2, -2, -2, -2, -2, -2, -1]];
-
-var Maze =
-   [[Level0 ,Level3, Level6, Level9],
-    [Level1 ,Level4, Level7, Level10],
-    [Level2 ,Level5, Level8, Level11]];
-
-var Colors =
-   [//Rooms
-    [{R:255, G:0  , B:127}, {R:255, G:127, B:0  }, {R:255, G:127, B:127}, {R:255, G:127, B:255}],
-    [{R:0  , G:127, B:255}, {R:127, G:0  , B:255}, {R:127, G:127, B:255}, {R:127, G:255, B:255}],
-    [{R:127, G:255, B:0  }, {R:0  , G:255, B:127}, {R:127, G:255, B:127}, {R:255, G:255, B:127}]];
-
-var TeleportMap =
-   [{s:{x:1, y:6, r_x:0, r_y:1}, e:{x:5, y:6, r_x:0, r_y:1}}];//2
+// Main();

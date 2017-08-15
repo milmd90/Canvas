@@ -146,7 +146,7 @@ function RenderLoop()
     // Callback to self after sleep-off time
     // Note that we convert back to seconds and then set this sleeping function
     TotalTime += CycleTime;
-    setTimeout(RenderLoop, SleepTime * 1000);
+    timer = setTimeout(RenderLoop, SleepTime * 1000);
 }
 
 /*** Graphics Primitive Wrappers ***/

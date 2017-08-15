@@ -1,82 +1,9 @@
-var speed = 1;
-
-var SolarSystem = [
-    {n:"Sun",     s:76.70, r:0.0,  o:0, w:0, c:{R:255,G:255,B:0}},
-    {n:"Mercury", s:0.267, r:1.9,  o:0, w:0, c:{R:255,G:0  ,B:0}},
-    {n:"Venus",   s:0.664, r:3.6,  o:0, w:0, c:{R:0  ,G:255,B:0}},
-    {n:"Earth",   s:0.669, r:5.0,  o:0, w:0, c:{R:0  ,G:0  ,B:255}},
-    {n:"Mars",    s:0.371, r:7.6,  o:0, w:0, c:{R:255,G:0  ,B:0}},
-    {n:"Jupiter", s:7.658, r:25.9, o:0, w:0, c:{R:255,G:50 ,B:0}},
-    {n:"Saturn",  s:6.391, r:47.5, o:0, w:0, c:{R:255,G:100,B:0}},
-    {n:"Uranus",  s:2.576, r:95.4, o:0, w:0, c:{R:0  ,G:255,B:255}},
-    {n:"Neptune", s:2.494, r:150,  o:0, w:0, c:{R:0  ,G:255,B:255}}
-];
-
-function makeSphere(deg, d_x, d_y, d_z, p_x, p_y, p_z, color) {
-    var newFaces = SphereFaces.slice();
-    var newVertex = SphereVertex.slice();
-    addSphereFaces(newFaces, newVertex, deg);
-    for (var n = 0; n < newVertex.length; n++) {
-        var v = newVertex[n];
-        var i = v.x * d_x;
-        var j = v.y * d_y;
-        var k = v.z * d_z;
-        newVertex[n] = {x:(i-p_x), y:(j-p_y), z:(k-p_z)};
-    }
-
-    Objects.push({v:newVertex, f:newFaces, color:color});
-}
-
-function addSphereFaces(newFaces, newVertex, deg) {
-    for (var c = 0; c < deg; c++) {
-        var length = newFaces.length; //newFaces.length increases over loop;
-        for (var n = 0; n < length; n++) {
-            var f = newFaces[0];
-            var i = newVertex[f.a];
-            var j = newVertex[f.b];
-            var r2 = {x:(i.x+j.x), y:(i.y+j.y), z:(i.z+j.z)};
-            var mag = (Math.sqrt(Math.pow(r2.x,2)+Math.pow(r2.y,2)+Math.pow(r2.z,2)));
-            var r = {x:(r2.x/mag), y:(r2.y/mag), z:(r2.z/mag)};
-            newVertex.push(r);
-            newFaces.push({a:f.a, b:f.c, c:newVertex.length-1, i:2*n});
-            newFaces.push({a:f.b, b:f.c, c:newVertex.length-1, i:2*n+1});
-            newFaces.splice(0,1);
-        }
-    }
-}
-
-var Objects = [];
-
+// Interface methods
 function Init() {
-    CameraPos.z = -200;
+    Objects = []
+    CameraPos = {x:0, y:0, z:-100};
     CameraRot = {x:1, y:0, z:0};
     makeSolarSystem();
-}
-
-function makeSolarSystem() {
-    var m = SolarSystem[0].s;
-    for (var i = 0; i < SolarSystem.length; i++) {
-        var b = SolarSystem[i];
-        var r = SolarSystem[i].r;
-        if (i === 0) {o = 0;}
-        else {o = 5*Math.sqrt(m/Math.pow(r,3));}
-        makeSphere(Math.log(b.s+1)/Math.LN10, b.r, 0, speed*o, speed*b.w, Math.ceil(Math.log(b.s+1)/Math.LN10), b.c);
-    }
-}
-
-function makeSphere(size, r, theta, orbit, w, deg, color) {
-    var newFaces = SphereFaces.slice();
-    var newVertex = SphereVertex.slice();
-    addSphereFaces(newFaces, newVertex, deg);
-    for (var n = 0; n < newVertex.length; n++) {
-        var v = newVertex[n];
-        var i = v.x * size;
-        var j = v.y * size;
-        var k = v.z * size;
-        newVertex[n] = {x:i, y:j, z:k};
-    }
-
-    Objects.push({v:newVertex, f:newFaces, r:r, theta:theta, rev:orbit, w:w, c:color});
 }
 
 function RenderScene() {
@@ -165,3 +92,16 @@ function RenderScene() {
         }
     }
 }
+
+function makeSolarSystem() {
+    var m = SolarSystem[0].s;
+    for (var i = 0; i < SolarSystem.length; i++) {
+        var b = SolarSystem[i];
+        var r = SolarSystem[i].r;
+        if (i === 0) {o = 0;}
+        else {o = 5*Math.sqrt(m/Math.pow(r,3));}
+        makeSphere(Math.log(b.s+1)/Math.LN10, b.r, 0, speed*o, speed*b.w, Math.ceil(Math.log(b.s+1)/Math.LN10), b.c);
+    }
+}
+
+// Main();

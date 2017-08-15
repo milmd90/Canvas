@@ -1,61 +1,8 @@
-
-/*** Data ***/
-
-// Cube vertex data
-var CubeVertex =
-[
-    {x:-1, y:-1, z:1},
-    {x:-1, y:1, z:1},
-    {x:1, y:1, z:1},
-    {x:1, y:-1, z:1},
-    {x:-1, y:-1, z:-1},
-    {x:-1, y:1, z:-1},
-    {x:1, y:1, z:-1},
-    {x:1, y:-1, z:-1}
-];
-
-// Cube face data
-var CubeFaces =
-[
-    // Front
-    { a:0, b:1, c:2, i:1 },
-    { a:2, b:3, c:0, i:1 },
-
-    // Top
-    { a:1, b:5, c:6, i:2 },
-    { a:6, b:2, c:1, i:2 },
-
-    // Back
-    { a:5, b:4, c:7, i:3 },
-    { a:7, b:6, c:5, i:3 },
-
-    // Bottom
-    { a:4, b:0, c:3, i:4 },
-    { a:3, b:7, c:4, i:4 },
-
-    // Right
-    { a:3, b:2, c:6, i:5 },
-    { a:6, b:7, c:3, i:5 },
-
-    // Left
-    { a:0, b:5, c:1, i:6 },
-    { a:0, b:4, c:5, i:6 }
-];
-
-// Camera position
-var CameraPos = {x: 0, y: 0, z: -10};
-
-// Camera rotation (Pitch, yaw, roll)
-var CameraRot = {x: 0, y: 0, z: 0};
-
-// Camera distortion
-var RatioConst = 320;
-
-/*** Functions ***/
-
 function Init()
 {
-    // Nothing to initialize
+    CameraPos = {x: 0, y: 0, z: -10};
+    CameraRot = {x: 0, y: 0, z: 0};
+    RatioConst = 320;
 }
 
 function RenderScene()
@@ -122,3 +69,5 @@ function RenderScene()
         RenderTriangle(PointA.x, PointA.y, PointB.x, PointB.y, PointC.x, PointC.y, 2);
     }
 }
+
+// Main();
