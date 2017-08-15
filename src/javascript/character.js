@@ -88,9 +88,9 @@ function makeCharacter() {
 
 function move() {
     //Update camera
-    var speed = .0001;
-    CameraRot.x -= speed * CameraChange.x;
-    CameraRot.y += speed * CameraChange.y;
+    var Speed = .0001;
+    CameraRot.x -= Speed * CameraChange.x;
+    CameraRot.y += Speed * CameraChange.y;
 
     var s = {
         body:[12, 13, 14],
@@ -153,6 +153,3 @@ function pointPosition(v, p, o, m) {
     var w = {x:a.x+p.x+m.x, y:a.y+p.y+m.y, z:a.z+p.z+m.z};
     return w;
 }
-
-//Start
-// Main();

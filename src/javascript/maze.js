@@ -266,5 +266,3 @@ function pointPosition(v, p, o, m) {
     var w = {x:a.x+p.x+m.x, y:a.y+p.y+m.y, z:a.z+p.z+m.z};
     return w;
 }
-
-// Main();

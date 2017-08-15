@@ -1,14 +1,16 @@
 div, span {
-    border: black solid 1px;
-    padding: 10px;
     display: inline-block;
     vertical-align: top;
 }
 
-.menu {
-    width: 25%;
+.menu div {
+    width: 100%;
 }
 
-.canvas {
-    width: 70%;
+.mainMenu h1 {
+    text-align: center;
+}
+
+#myCanvas {
+    float: right;
 }

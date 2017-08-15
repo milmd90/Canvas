@@ -69,5 +69,3 @@ function RenderScene()
         RenderTriangle(PointA.x, PointA.y, PointB.x, PointB.y, PointC.x, PointC.y, 2);
     }
 }
-
-// Main();

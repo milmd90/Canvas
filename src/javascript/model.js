@@ -100,8 +100,6 @@ function makeSolarSystem() {
         var r = SolarSystem[i].r;
         if (i === 0) {o = 0;}
         else {o = 5*Math.sqrt(m/Math.pow(r,3));}
-        makeSphere(Math.log(b.s+1)/Math.LN10, b.r, 0, speed*o, speed*b.w, Math.ceil(Math.log(b.s+1)/Math.LN10), b.c);
+        makeSphere(Math.log(b.s+1)/Math.LN10, b.r, 0, Speed*o, Speed*b.w, Math.ceil(Math.log(b.s+1)/Math.LN10), b.c);
     }
 }
-
-// Main();

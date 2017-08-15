@@ -62,7 +62,7 @@ var BackContextHandle = null;
 // the main render loop
 function Main() {
     // Get context handles
-    CanvasHandle = document.getElementById("SampleCanvas");
+    CanvasHandle = document.getElementById("myCanvas");
     ContextHandle = CanvasHandle.getContext("2d");
 
     // Get the canvas size
